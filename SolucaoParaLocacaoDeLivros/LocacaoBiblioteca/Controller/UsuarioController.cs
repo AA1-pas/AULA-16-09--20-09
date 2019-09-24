@@ -12,40 +12,17 @@ namespace LocacaoBiblioteca.Controller
     /// </summary>
     public class UsuarioController
     {
-        //Criando privado para impedir o programador de adicionar um ID ou alterar fora da classe
-        private int idContador = 0;
-
-        /// <summary>
-        /// Metodo que realiza o login dentro do nosso sistema
-        /// Para realizar o login padrão use:
-        /// Login:Admin
-        /// Senha: Admin
-        /// </summary>
-        /// <param name="Usuario">Passamos um objeto de nome Usuário como parametro</param>
-        /// <returns>Retorna verdadeiro quando existir usuário com este login e senha</returns>
+        private LocacaoContext contexDB = new LocacaoContext();
         public bool LoginSistema(Usuario usuarios)
         {
-            return ListaUsuarios.Exists(x => x.Login == usuarios.Login && x.Senha == usuarios.Senha);
+            
+            return RetornaListadeUsuario().Exists(x => x.Login == usuarios.Login && x.Senha == usuarios.Senha);
         }
-
-        public UsuarioController()
-        {
-            ListaUsuarios = new List<Usuario>();
-
-            ListaUsuarios.Add(new Usuario()
-            {
-                Login = "Admin",
-                Senha = "Admin",
-                Id = idContador++,
-            }) ;
-
-        }
-        private List<Usuario> ListaUsuarios { get; set; }
 
         public void AdicionarUsuarios (Usuario parametrosUser)
         {
-            parametrosUser.Id = idContador++;
-            ListaUsuarios.Add(parametrosUser);
+            parametrosUser.Id = contexDB.idContadorUsuario++;
+            contexDB.listaUsuarios.Add(parametrosUser);
 
         }
 
@@ -56,7 +33,7 @@ namespace LocacaoBiblioteca.Controller
         public List<Usuario> RetornaListadeUsuario ()
         {
             // como Where retorna um Enumereble temos que retornar um List -> com o ToList
-            return ListaUsuarios.Where(x => x.Ativo).ToList<Usuario>(); // para falso: !x.Ativo
+            return contexDB.listaUsuarios.Where(x => x.Ativo).ToList<Usuario>(); // para falso: !x.Ativo
         }
 
         /// <summary>
@@ -65,7 +42,9 @@ namespace LocacaoBiblioteca.Controller
         /// <param name="identificadorId">Parametro que identifica o usuario que será desativado</param>
         public void RemoverUsuarioPorId (int identificadorId)
         {
-            ListaUsuarios.FirstOrDefault(x => x.Id == identificadorId).Ativo = false;
+           var idLogin = contexDB.listaUsuarios.FirstOrDefault(x => x.Id == identificadorId);
+            if (idLogin != null)
+                idLogin.Ativo = false;
         }
    
 

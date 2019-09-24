@@ -9,26 +9,8 @@ namespace LocacaoBiblioteca.Controller
 {
     public class LivrosController
     {
-        //Criando privado para impedir o programador de adicionar um ID ou alterar fora da classe
-        private int idContador = 0;
-        public LivrosController()
-        {
-            ListaLivros = new List<Livro>();
+        private  LocacaoContext contexDB = new LocacaoContext();
 
-            ListaLivros.Add(new Livro()
-            {
-                Nome = "Meu Primeiro Livro",
-                Id = idContador++
-            });
-
-            ListaLivros.Add(new Livro()
-            {
-                Nome = "Meu Segundo Livro",
-                Id = idContador++
-            }) ;
-
-        }
-        private List<Livro> ListaLivros { get; set; }
 
         /// <summary>
         /// Metodo que adiciona o livro em nossa lista já "intanciada" criada dentro do construtor
@@ -36,8 +18,10 @@ namespace LocacaoBiblioteca.Controller
         /// <param name="parametroLivro">Informações do ivro que vamos adicionar</param>
         public void AdicionarLivro(Livro parametroLivro)
         {
-            parametroLivro.Id = idContador++;
-            ListaLivros.Add(parametroLivro);
+            parametroLivro.Id = contexDB.idContadorLivro;
+            parametroLivro.DataCriacao = DateTime.Now;
+            contexDB.listaLivros.Add(parametroLivro);
+
         }
 
         /// <summary>
@@ -46,7 +30,18 @@ namespace LocacaoBiblioteca.Controller
         /// <returns>Retorna a lista de livors cadastrados</returns>
         public List<Livro> RetornaListadeLivros()
         {
-            return ListaLivros;
+            return contexDB.listaLivros.FindAll(x => x.Ativo == true);
+        }
+
+        /// <summary>
+        /// Metodo que desativa um registro de usuario ativo cadastrado  em nossa lista
+        /// </summary>
+        /// <param name="identificadorId">Parametro que identifica o livro que será desativado</param>
+        public void RemoverLivroPorId(int identificadorId)
+        {
+            var livro = contexDB.listaLivros.FirstOrDefault(x => x.Id == identificadorId);
+            if (livro != null)
+                livro.Ativo = false;
         }
     }
 }
