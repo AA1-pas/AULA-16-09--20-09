@@ -17,10 +17,9 @@ namespace LocacaoBiblioteca.Controller
         /// </summary>
         /// <param name="parametroLivro">Informações do ivro que vamos adicionar</param>
         public void AdicionarLivro(Livro parametroLivro)
-        {
-            parametroLivro.Id = contexDB.idContadorLivro;
-            parametroLivro.DataCriacao = DateTime.Now;
-            contexDB.listaLivros.Add(parametroLivro);
+        {     
+            contexDB.Livros.Add(parametroLivro);
+            contexDB.SaveChanges();
 
         }
 
@@ -28,20 +27,37 @@ namespace LocacaoBiblioteca.Controller
         /// Metodo que retorna nossa lista interna de livros
         /// </summary>
         /// <returns>Retorna a lista de livors cadastrados</returns>
-        public List<Livro> RetornaListadeLivros()
+        public IQueryable<Livro> RetornaListadeLivros()
         {
-            return contexDB.listaLivros.FindAll(x => x.Ativo == true);
+            return contexDB.Livros.Where(x => x.Ativo == true);
         }
 
         /// <summary>
         /// Metodo que desativa um registro de usuario ativo cadastrado  em nossa lista
         /// </summary>
         /// <param name="identificadorId">Parametro que identifica o livro que será desativado</param>
-        public void RemoverLivroPorId(int identificadorId)
+        public bool RemoverLivroPorId(int identificadorId)
         {
-            var livro = contexDB.listaLivros.FirstOrDefault(x => x.Id == identificadorId);
-            if (livro != null)
-                livro.Ativo = false;
+            var livro = contexDB.Livros.FirstOrDefault(x => x.Id == identificadorId && x.Ativo==true);
+            if (livro == null)
+                return false;
+            livro.Ativo = false;
+            contexDB.SaveChanges();
+            return true;
+        }
+
+        /// <summary>
+        /// Metodo atualiza o livro conforme objeto Livro recebido
+        /// </summary>
+        /// <param name="item">Parametro objeto Livro para atualizar</param>
+        /// <returns></returns>
+        public bool AtualizaLivros(Livro item)
+        {
+            if (contexDB.Livros.Where(x => x.Id == item.Id && x.Ativo == true) == null)
+                return false;
+            item.DataAlteracao = DateTime.Now;
+            contexDB.SaveChanges();
+            return true;
         }
     }
 }

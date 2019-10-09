@@ -40,6 +40,7 @@ namespace InterfaceBiblioteca
                 Console.WriteLine("4 - Cadastrar Usuários");
                 Console.WriteLine("5 - Remover Usuários");
                 Console.WriteLine("6 - Remover Livros");
+                Console.WriteLine("7 - Atualizar Livros");
                 Console.WriteLine("8 - Voltar ao login");
                 Console.WriteLine("9 - Sair");
                 Console.Write("\nOpção: ");
@@ -76,6 +77,11 @@ namespace InterfaceBiblioteca
                     case 6:
                         CabecalhoPrograma();
                         RemoverLivroId();
+                        RetornaMenuTecla();
+                        break;
+                    case 7:
+                        CabecalhoPrograma();
+                        AtualizaLivro();
                         RetornaMenuTecla();
                         break;
 
@@ -130,8 +136,8 @@ namespace InterfaceBiblioteca
         {
 
             MostraCabecAcao("LISTA DE LIVROS CADASTRADOS");
-            livrosController.RetornaListadeLivros().ForEach(i => Console.WriteLine($"Nome: {i.Nome} \n" +
-                $"Id: {i.Id}\nData Criação: {i.DataCriacao}\n----------------------------------\n"));
+            livrosController.RetornaListadeLivros().ToList().ForEach(i => Console.WriteLine($"Nome: {i.Nome} \n" +
+                $"Id: {i.Id}\nData Criação: {i.DataCriacao}\nData Última Alteração: {i.DataAlteracao}\n----------------------------------\n"));
            
         }
 
@@ -141,7 +147,7 @@ namespace InterfaceBiblioteca
         private static void MostrarUsuarios()
         {
             MostraCabecAcao("LISTA DE USUARIOS CADASTRADOS");
-            usuarioController. RetornaListadeUsuario().ForEach(i => Console.WriteLine($"Id: {i.Id} \n" +
+            usuarioController. RetornaListadeUsuario().ToList().ForEach(i => Console.WriteLine($"Id: {i.Id} \n" +
                 $"Nome: {i.Login}\n----------------------------------\n"));
         }
 
@@ -241,8 +247,10 @@ namespace InterfaceBiblioteca
             MostrarUsuarios();
             Console.WriteLine("Informe o ID do usuário que deseja desativar:");
             int.TryParse(Console.ReadLine(), out int usuarioId);
-            usuarioController.RemoverUsuarioPorId(usuarioId);   
+            if(usuarioController.RemoverUsuarioPorId(usuarioId))   
             Console.WriteLine("*** USUÁRIO REMOVIDO COM SUCESSO ***\n");
+            else
+            Console.WriteLine("\n*** OPERAÇÃO NÃO REALIZADA ***");
         }
 
         /// <summary>
@@ -258,13 +266,16 @@ namespace InterfaceBiblioteca
         /// Metodo remove (inativa) o livro através de um id informado pelo usuário
         /// </summary>
         public static void RemoverLivroId()
+
         {
             MostraCabecAcao("REMOVE CADASTRO LIVROS");
             MostrarLivros();
             Console.WriteLine("Informe o ID do livro que deseja remover:");
             int.TryParse(Console.ReadLine(),out int livroId) ;
-            livrosController.RemoverLivroPorId(livroId);
+            if(livrosController.RemoverLivroPorId(livroId))
             Console.WriteLine("*** LIVRO REMOVIDO COM SUCESSO ***\n");
+            else
+                Console.WriteLine("*** OPERAÇÃO NÃO REALIZADA ***");
         }
         /// <summary>
         /// Mostra no cabeçalho a ação que está sendo executada
@@ -273,6 +284,30 @@ namespace InterfaceBiblioteca
         public static void MostraCabecAcao(string nomeAcao)
         {
             Console.WriteLine("=============={0,18}==============\n", nomeAcao);
+        }
+
+        /// <summary>
+        /// Metodo atualiza o livro através de um id informado pelo usuário
+        /// </summary>
+        public static void AtualizaLivro()
+        {
+            MostraCabecAcao("ATUALIZA CADASTRO LIVROS");
+            MostrarLivros();
+            Console.WriteLine("Informe o ID do livro que deseja atualizar:");
+            int.TryParse(Console.ReadLine(), out int livroId);
+            var atLivro = livrosController.RetornaListadeLivros().FirstOrDefault(x => x.Id == livroId);
+            if (atLivro == null)
+            {
+                Console.WriteLine("\n*** LIVRO INEXISTENTE ***");
+                return;
+            }
+                
+            Console.WriteLine("Digite o novo nome do livro:");
+            var nome = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(nome) == false)
+                atLivro.Nome = nome;
+            livrosController.AtualizaLivros(atLivro);
+            Console.WriteLine("*** LIVRO ALTERADO COM SUCESSO ***\n");
         }
     }
 }
