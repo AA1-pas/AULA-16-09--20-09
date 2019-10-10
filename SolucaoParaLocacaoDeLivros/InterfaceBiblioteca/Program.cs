@@ -188,20 +188,16 @@ namespace InterfaceBiblioteca
             string nomeDoLivro = string.Empty;
             MostraCabecAcao("CADASTRO DE LIVROS");
             
-            while(nomeDoLivro == "")
-            {
-                Console.WriteLine("Digite um nome válido de um livro a ser cadastrado:");
-                nomeDoLivro = Console.ReadLine();
-                if (nomeDoLivro == "")
-                    Console.WriteLine("*** NOME DE LIVRO INVÁLIDO ***\n");
+            Console.WriteLine("Digite um nome válido de um livro a ser cadastrado:");
+           nomeDoLivro = Console.ReadLine();
 
-            }
-           
-            livrosController.AdicionarLivro(new Livro()
+        if( livrosController.AdicionarLivro(new Livro()
             {
                 Nome = nomeDoLivro,
-        });
+        }))
             Console.WriteLine("*** LIVRO CADASTRADO COM SUCESSO ***\n");
+            else
+                Console.WriteLine("*** OPERAÇÃO NÃO REALIZADA ***\n");
         }
 
         /// <summary>

@@ -16,10 +16,13 @@ namespace LocacaoBiblioteca.Controller
         /// Metodo que adiciona o livro em nossa lista já "intanciada" criada dentro do construtor
         /// </summary>
         /// <param name="parametroLivro">Informações do ivro que vamos adicionar</param>
-        public void AdicionarLivro(Livro parametroLivro)
-        {     
+        public bool AdicionarLivro(Livro parametroLivro)
+        {
+            if (string.IsNullOrWhiteSpace(parametroLivro.Nome))
+                return false;
             contexDB.Livros.Add(parametroLivro);
             contexDB.SaveChanges();
+            return true;
 
         }
 
