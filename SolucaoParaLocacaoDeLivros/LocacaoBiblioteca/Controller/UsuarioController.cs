@@ -13,6 +13,17 @@ namespace LocacaoBiblioteca.Controller
     public class UsuarioController
     {
         private LocacaoContext contexDB = new LocacaoContext();
+
+        public UsuarioController()
+        {
+            if(contexDB.Usuarios.Count()==0)
+                {
+                    contexDB.Usuarios.Add(new Usuario(){Login = "Admin",Senha="Admin"});
+                    contexDB.SaveChanges();
+      
+                }
+        }
+
         public bool LoginSistema(Usuario usuarios)
         {
             

@@ -10,7 +10,7 @@ namespace LocacaoBiblioteca.Model
 {
     public class LocacaoContext  : DbContext
     {
-   
+          
         //instanciamos "Carregamos para memoria" nosso controlador de livros
         public DbSet<Livro> Livros { get; set; } 
 
